@@ -1,0 +1,55 @@
+expr_name: base
+
+save_root: ./
+data_root: ../input/food-101/
+has_test: true
+num_classes: 101
+num_folds: 5
+
+save_preds: false
+run_fold1_only: false
+
+device:
+  name: gpu
+  id: '0'
+
+num_epochs: 3
+batch_size: 32
+
+model:
+  base_func: cs.Classifiers.get('resnet34')[0]
+  base_weights: imagenet
+  dropout_rate: 0.1
+
+scheduler:
+  name: scripts.schedulers.CosineScheduler
+  params:
+    init_lr: 0.001
+    min_lr: 1.0e-05
+
+transform:
+  train_size:
+  - 320
+  - 320
+  aug_name: scripts.augmentations.rand_augment
+  aug_params:
+    num_augments: 2
+    magnitude: 5
+  val_size:
+  - 320
+  - 320
+  test_size:
+  - 320
+  - 320
+
+loss:
+  name: tf.keras.losses.CategoricalCrossentropy
+  params:
+    reduction: none
+  weight_decay: 1.0e-05
+
+optimizer:
+  name: tf.keras.optimizers.Adam
+  params: {}
+
+seed: 8888
